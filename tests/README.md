@@ -31,14 +31,9 @@ The Gmail connector integration tests require a real Gmail account and credentia
    - **Important**: The connector uses `gmail.modify` scope which allows:
      - Reading emails
      - Modifying labels
-     - Deleting messages
      - Sending messages (if needed)
+   - **Note**: `gmail.modify` does not allow permanent deletion of messages. Test cleanup removes labels from test emails instead of deleting them.
    - Download credentials JSON file to `creds/` directory (e.g., `creds/gmail_credentials.json`)
-   
-   **Note**: If you get "insufficient authentication scopes" errors when deleting test emails:
-   - Delete your existing token file (e.g., `creds/test_gmail_token.json`)
-   - Re-run the tests to trigger OAuth flow again
-   - Grant all requested permissions when prompted
 
 2. **Set Environment Variables**:
    ```bash
@@ -73,12 +68,14 @@ The integration tests cover:
 - ✅ Checking if events are processed
 - ✅ Query filtering
 - ✅ Event structure validation
-- ✅ Resetting processed events
+- ✅ Updating query dynamically
 
 ### Notes
 
-- Tests use a test-specific processed label to avoid interfering with production data
+- Tests use a test-specific label (`kiddo/test`) to identify and clean up test emails
+- Tests create test emails automatically and clean them up after running
+- Test cleanup removes labels from test emails (does not delete them, as `gmail.modify` scope doesn't allow deletion)
 - Tests limit the number of fetched events to avoid long test runs
 - Tests skip if credentials are not configured (useful for CI/CD)
-- The test Gmail account should have some unread emails for comprehensive testing
+- Tests use module-scoped fixtures to share connectors and test emails across all tests for efficiency
 

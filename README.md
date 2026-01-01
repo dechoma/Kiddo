@@ -92,7 +92,8 @@ uv run pytest tests/integration -m integration
 The system uses a centralized configuration management system:
 
 - **Environment Variables**: Load from `.env` file or system environment
-- **Type-safe Config Classes**: Defined in `src/config.py`
+- **Type-safe Config Classes**: Defined in `src/config/` module
+- **YAML Configuration**: Connector configurations in `connectors.yaml`
 - **Single Source of Truth**: All configuration loaded via `load_config()`
 
 ### Configuration Options
@@ -105,17 +106,6 @@ Key configuration sections:
 - **Calendar**: `GOOGLE_CALENDAR_*`, `ICAL_*` variables
 - **Notifications**: `SMS_*`, `EMAIL_*` variables
 
-## Implementation Status
-
-This is a **skeleton implementation** with:
-- ✅ Core interfaces and abstractions
-- ✅ Data models
-- ✅ Component structure
-- ✅ Main orchestration flow
-- ✅ Gmail connector with query filtering
-- ✅ Centralized configuration management
-- ✅ YAML-based prompt management for LLM processing
-- ⏳ Full implementations (marked with TODO comments)
 
 ## Gmail Connector
 
@@ -128,12 +118,13 @@ The Gmail connector allows fetching emails from Gmail using Gmail search queries
    - Create a new project or select existing
    - Enable Gmail API
    - Create OAuth 2.0 credentials (Desktop app)
-   - **Important**: The connector requires `gmail.modify` scope to apply processed labels
+   - **Important**: The connector uses `gmail.modify` scope which allows reading, modifying labels, and sending messages
+   - **Note**: `gmail.modify` does not allow permanent deletion of messages (requires full `https://mail.google.com/` scope)
    - Download credentials JSON file to `creds/` directory (e.g., `creds/gmail_credentials.json`)
 
 2. **Install dependencies**:
 ```bash
-pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+uv sync --extra gmail
 ```
 
 ### Usage
@@ -169,7 +160,7 @@ The Gmail connector automatically tracks processed events using Gmail labels:
 - The label is created automatically if it doesn't exist
 - You can customize the label name via the `processed_label` config option
 
-**Note**: The connector requires `gmail.modify` scope (not just `gmail.readonly`) to apply labels.
+**Note**: The connector requires `gmail.modify` scope (not just `gmail.readonly`) to apply labels. This scope allows label management but does not allow permanent deletion of messages.
 
 ### Query Examples
 
@@ -275,17 +266,12 @@ All calendar events support customizable alerting:
 
 ## Next Steps
 
-1. Implement specific connector logic for each source type
+1. Implement remaining connector types (API, Webhook, File, Database)
 2. Integrate actual LLM API (OpenAI, Anthropic, etc.)
-3. Implement calendar provider APIs
-4. Implement notification channel delivery
+3. Implement calendar provider APIs (Google Calendar, iCal)
+4. Implement notification channel delivery (Twilio, SendGrid)
 5. Add proper message queue (Redis, RabbitMQ, Kafka)
-6. Add configuration management
-7. Add error handling and retry logic
-8. Add monitoring and logging
-9. Add tests
-
-## Configuration
-
-Configuration should be externalized (e.g., via environment variables or config files). See `main.py` for example initialization.
+6. Add error handling and retry logic
+7. Add monitoring and logging
+8. Add more comprehensive tests
 
