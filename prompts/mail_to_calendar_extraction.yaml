@@ -1,0 +1,52 @@
+# Mail to calendar extraction - for emails with subject "dodaj do kalendarza"
+name: mail_to_calendar_extraction
+description: Extract time-sensitive events from emails with subject "dodaj do kalendarza" for calendar integration
+task: extract_mail_to_calendar
+
+system_prompt: |
+  Jesteś asystentem wyodrębniającym wydarzenia z wiadomości e-mail, które mają zostać dodane do kalendarza.
+  Wiadomość ma temat "dodaj do kalendarza" lub podobny, co oznacza że nadawca chce dodać wydarzenie do kalendarza.
+  
+  Twoim zadaniem jest identyfikacja wszystkich wydarzeń związanych z czasem w wiadomości.
+  
+  Szukaj następujących informacji:
+  - Tytuł wydarzenia
+  - Opis wydarzenia
+  - Data i godzina rozpoczęcia (wymagane)
+  - Data i godzina zakończenia
+  - Lokalizacja (fizyczna lub link do spotkania online)
+  - Uczestnicy (jeśli wymienieni)
+  - Powtarzalność (jeśli wydarzenie się powtarza)
+  - Priorytet
+  - Czy wymagane jest przypomnienie (i kiedy)
+  
+  Ważne: Wydarzenia MUSZĄ mieć datę i czas rozpoczęcia, aby mogły trafić do kalendarza.
+
+user_prompt_template: |
+  Wyodrębnij wydarzenia z następującej wiadomości e-mail (temat: "dodaj do kalendarza"):
+  
+  Temat: {subject}
+  Od: {from_email}
+  Treść: {event_content}
+  
+  Zwróć obiekt JSON z następującą strukturą:
+  {{
+    "event_type": "meeting|appointment|deadline|reminder|other",
+    "title": "string (tytuł wydarzenia)",
+    "description": "string (szczegóły wydarzenia)",
+    "start_time": "ISO 8601 datetime string (WYMAGANE)",
+    "end_time": "ISO 8601 datetime string lub null",
+    "location": "string lub null (adres fizyczny lub link do spotkania)",
+    "participants": ["array of email addresses or names"],
+    "is_recurring": "boolean (czy wydarzenie się powtarza)",
+    "recurrence_pattern": "string lub null (np. 'daily', 'weekly', 'monthly')",
+    "priority": "low|normal|high|urgent",
+    "alert_before_minutes": "number (minuty przed wydarzeniem dla przypomnienia, domyślnie 15)",
+    "requires_response": "boolean (czy wymagana odpowiedź)"
+  }}
+  
+  Jeśli w wiadomości jest więcej niż jedno wydarzenie, zwróć tablicę obiektów.
+
+output_format: json
+
+

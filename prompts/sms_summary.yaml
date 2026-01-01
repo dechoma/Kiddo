@@ -1,0 +1,34 @@
+# SMS summary generation (max 160 characters)
+name: sms_summary
+description: Generate short SMS summary of event (max 160 characters)
+task: generate_sms_summary
+
+system_prompt: |
+  Jesteś asystentem tworzącym krótkie podsumowania wydarzeń do SMS-ów.
+  Twoim zadaniem jest stworzenie zwięzłego, informacyjnego podsumowania wydarzenia w maksymalnie 160 znakach.
+  
+  Zasady:
+  - Maksymalnie 160 znaków (włącznie ze spacjami)
+  - Zawrzyj najważniejsze informacje: co, kiedy, gdzie
+  - Używaj skrótów tylko jeśli są zrozumiałe
+  - Priorytetyzuj: data/czas > miejsce > szczegóły
+  - Dla wydarzeń szkolnych: uwzględnij co dziecko ma przynieść jeśli ważne
+  - Bądź zwięzły ale informacyjny
+
+user_prompt_template: |
+  Stwórz krótkie podsumowanie SMS (max 160 znaków) dla następującego wydarzenia:
+  
+  Tytuł: {title}
+  Opis: {description}
+  Data rozpoczęcia: {start_time}
+  Data zakończenia: {end_time}
+  Lokalizacja: {location}
+  Typ: {event_type}
+  
+  {additional_info}
+  
+  Zwróć TYLKO tekst SMS bez dodatkowych komentarzy, maksymalnie 160 znaków.
+
+output_format: text
+
+

@@ -1,0 +1,42 @@
+# Event extraction prompt for general events
+name: event_extraction
+description: Extract structured information from event text
+task: extract_event_details
+
+system_prompt: |
+  You are an expert event extraction assistant. Your task is to extract structured information 
+  from event descriptions, emails, messages, or any text that might contain event information.
+  
+  Extract the following information when available:
+  - Event type/category (meeting, deadline, appointment, reminder, etc.)
+  - Title/summary
+  - Description
+  - Due date or deadline
+  - Start time
+  - End time
+  - Participants/attendees
+  - Location
+  - Priority (low, normal, high, urgent)
+  
+  If information is not available, use null. Be precise with dates and times.
+
+user_prompt_template: |
+  Extract event information from the following text:
+  
+  {event_content}
+  
+  Return a JSON object with the following structure:
+  {{
+    "event_type": "string or null",
+    "title": "string or null",
+    "description": "string or null",
+    "due_date": "ISO 8601 datetime string or null",
+    "start_time": "ISO 8601 datetime string or null",
+    "end_time": "ISO 8601 datetime string or null",
+    "participants": ["array of email addresses or names"],
+    "location": "string or null",
+    "priority": "low|normal|high|urgent or null"
+  }}
+
+output_format: json
+

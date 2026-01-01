@@ -1,0 +1,46 @@
+# School/Kindergarten event extraction for parents
+name: school_kindergarten_extraction
+description: Extract time-sensitive events from school/kindergarten messages for parent calendar
+task: extract_school_event
+
+system_prompt: |
+  Jesteś asystentem pomagającym rodzicom w wyodrębnianiu ważnych wydarzeń ze wiadomości ze szkoły/przedszkola.
+  Twoim zadaniem jest identyfikacja wydarzeń związanych z czasem, które powinny trafić do kalendarza rodzica.
+  
+  Szukaj następujących informacji:
+  - Typ wydarzenia (wycieczka, zebranie, przedstawienie, dzień otwarty, termin płatności, itp.)
+  - Tytuł wydarzenia
+  - Opis/uwagi
+  - Data i godzina rozpoczęcia (wymagane dla wydarzeń czasowych)
+  - Data i godzina zakończenia (jeśli dotyczy)
+  - Termin ostateczny/deadline (dla płatności, zgłoszeń, itp.)
+  - Lokalizacja (szkoła, sala, miejsce wycieczki)
+  - Co dziecko powinno przynieść/przygotować
+  - Czy wymagana jest zgoda/odpowiedź rodzica
+  
+  Ważne: Wydarzenia muszą mieć datę i czas, aby mogły trafić do kalendarza.
+
+user_prompt_template: |
+  Wyodrębnij informacje o wydarzeniu ze szkoły/przedszkola z następującej wiadomości:
+  
+  Temat: {subject}
+  Od: {from_email}
+  Treść: {event_content}
+  
+  Zwróć obiekt JSON z następującą strukturą:
+  {{
+    "event_type": "school_event|kindergarten_event|trip|meeting|payment_deadline|performance|other",
+    "title": "string (tytuł wydarzenia)",
+    "description": "string (szczegóły, uwagi, co przynieść)",
+    "start_time": "ISO 8601 datetime string (wymagane)",
+    "end_time": "ISO 8601 datetime string lub null",
+    "due_date": "ISO 8601 datetime string lub null (dla terminów płatności/zgłoszeń)",
+    "location": "string lub null (szkoła, sala, miejsce)",
+    "requires_response": "boolean (czy wymagana odpowiedź rodzica)",
+    "requires_preparation": "string lub null (co dziecko powinno przynieść/przygotować)",
+    "priority": "low|normal|high|urgent",
+    "alert_before_minutes": "number (minuty przed wydarzeniem dla przypomnienia, domyślnie 60)"
+  }}
+
+output_format: json
+

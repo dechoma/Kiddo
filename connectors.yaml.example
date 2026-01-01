@@ -1,0 +1,60 @@
+# Connectors Configuration
+# Define all connector instances (Gmail, API, Webhook, File, Database, etc.)
+# Each connector type can have multiple instances with their own configurations
+
+gmail_connectors:
+  - name: school_events
+    type: gmail
+    credentials_path: creds/gmail_credentials.json
+    token_path: creds/gmail_token_school.json
+    query: is:unread -label:kiddo/processed_school newer_than:3d
+    max_results: 100
+    processed_label: kiddo/processed_school
+  
+  - name: mail_to_calendar
+    type: gmail
+    credentials_path: creds/gmail_credentials.json
+    token_path: creds/gmail_token_calendar.json
+    query: subject:"dodaj do kalendarza" is:unread newer_than:3d
+    max_results: 100
+    processed_label: kiddo/processed_calendar
+  
+  - name: general_events
+    type: gmail
+    credentials_path: creds/gmail_credentials.json
+    token_path: creds/gmail_token_general.json
+    query: is:unread subject:meeting newer_than:3d
+    max_results: 100
+    processed_label: kiddo/processed_general
+
+# API connectors
+# api_connectors:
+#   - name: external_api
+#     type: api
+#     endpoint: https://api.example.com/events
+#     auth_type: bearer
+#     api_key: your-api-key
+
+# Webhook connectors
+# webhook_connectors:
+#   - name: webhook_server
+#     type: webhook
+#     port: 8080
+#     path: /webhook
+#     secret: webhook-secret
+
+# File connectors
+# file_connectors:
+#   - name: log_parser
+#     type: file
+#     file_path: /var/log/events.log
+#     file_pattern: "*.log"
+#     watch: true
+
+# Database connectors
+# database_connectors:
+#   - name: postgres_events
+#     type: database
+#     connection_string: postgresql://user:pass@localhost/db
+#     query: SELECT * FROM events WHERE processed = false
+

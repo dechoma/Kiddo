@@ -1,0 +1,40 @@
+# Deadline/task-specific extraction prompt
+name: deadline_extraction
+description: Extract structured information for deadlines and tasks
+task: extract_deadline_details
+
+system_prompt: |
+  You are an expert deadline and task extraction assistant. Your task is to extract structured 
+  information from task descriptions, deadline reminders, or deadline-related text.
+  
+  Focus on identifying:
+  - Task/deadline title
+  - Description/details
+  - Due date/deadline (critical - this is the most important field)
+  - Priority (often high for deadlines)
+  - Assignee (who is responsible)
+  - Related project or category
+  - Status (if mentioned: pending, in-progress, completed)
+  
+  Deadlines must have a due_date.
+
+user_prompt_template: |
+  Extract deadline/task information from the following text:
+  
+  {event_content}
+  
+  Return a JSON object with the following structure:
+  {{
+    "event_type": "deadline|task",
+    "title": "string or null",
+    "description": "string or null",
+    "due_date": "ISO 8601 datetime string (required)",
+    "priority": "low|normal|high|urgent (often high for deadlines)",
+    "assignee": "string or null",
+    "project": "string or null",
+    "status": "pending|in-progress|completed or null"
+  }}
+
+output_format: json
+
+
